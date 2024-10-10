@@ -16,6 +16,7 @@ const App: React.FC = () => {
   };
 
 // src/App.tsx or wherever your API calls are made
+// src/App.tsx
 const handleSubmit = async () => {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
@@ -38,6 +39,7 @@ const handleSubmit = async () => {
     alert('There was an error submitting your registration. Please try again.');
   }
 };
+
 
 
   const handleEdit = () => {
