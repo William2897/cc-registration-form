@@ -1,7 +1,7 @@
 // src/components/WelcomeScreen.tsx
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import CC640X360 from '../assets/CC640X360.png';
+import CC640x360 from '../assets/CC640x360.png';
 import CC1280x720 from '../assets/CC1280x720.png';
 import CC1920x1080 from '../assets/CC1920x1080.png';
 
@@ -13,8 +13,8 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
   return (
     <div className="text-center">
       <img
-        src={CC640X360}
-        srcSet={`${CC640X360} 640w, ${CC1280x720} 1280w, ${CC1920x1080} 1920w`}
+        src={CC640x360}
+        srcSet={`${CC640x360} 640w, ${CC1280x720} 1280w, ${CC1920x1080} 1920w`}
         sizes="(max-width: 640px) 640w, (max-width: 1280px) 1280w, 1920w"
         alt="Welcome"
         className="mx-auto mb-6"

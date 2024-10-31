@@ -15,32 +15,28 @@ const App: React.FC = () => {
     setFormData((prev: any) => ({ ...prev, ...data }));
   };
 
-// src/App.tsx or wherever your API calls are made
-// src/App.tsx
-const handleSubmit = async () => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+      setCurrentStep(currentStep + 1);
+    } catch (error) {
+      console.error('Error submitting registration:', error);
+      alert('There was an error submitting your registration. Please try again.');
     }
-
-    const data = await response.json();
-    console.log(data.message);
-    setCurrentStep(currentStep + 1);
-  } catch (error) {
-    console.error('Error submitting registration:', error);
-    alert('There was an error submitting your registration. Please try again.');
-  }
-};
-
-
+  };
 
   const handleEdit = () => {
     setCurrentStep(2); // Navigate back to the Personal Info step
