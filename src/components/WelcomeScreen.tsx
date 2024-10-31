@@ -1,6 +1,9 @@
 // src/components/WelcomeScreen.tsx
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import CC640X360 from '../assets/CC640X360.png';
+import CC1280x720 from '../assets/CC1280x720.png';
+import CC1920x1080 from '../assets/CC1920x1080.png';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -9,7 +12,16 @@ interface WelcomeScreenProps {
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
   return (
     <div className="text-center">
-      <h1 className="text-3xl font-bold mb-4 text-amber-600">Welcome to the Church Camp Registration Portal!</h1>
+      <img
+        src={CC640X360}
+        srcSet={`${CC640X360} 640w, ${CC1280x720} 1280w, ${CC1920x1080} 1920w`}
+        sizes="(max-width: 640px) 640w, (max-width: 1280px) 1280w, 1920w"
+        alt="Welcome"
+        className="mx-auto mb-6"
+      />
+      <h1 className="text-3xl font-bold mb-4 text-amber-600">
+        Welcome to the Church Camp Registration Portal!
+      </h1>
       <p className="mb-6">Get started with your registration process.</p>
       <button
         onClick={onStart}

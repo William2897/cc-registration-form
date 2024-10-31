@@ -14,6 +14,10 @@ interface FamilyMember {
   dateOfBirth: string;
   gender: string;
   type: string;
+  hasFoodAllergies: boolean;
+  foodAllergiesDetails: string;
+  hasHealthConcerns: boolean;
+  healthConcernsDetails: string;
 }
 
 const PackageSelection: React.FC<PackageSelectionProps> = ({
@@ -36,6 +40,20 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
   const [totalFee, setTotalFee] = useState(formData.totalFee || 0);
   const [originalFee, setOriginalFee] = useState(formData.originalFee || 0);
   const [error, setError] = useState('');
+
+  // New state variables for individual package
+  const [hasFoodAllergies, setHasFoodAllergies] = useState(
+    formData.hasFoodAllergies || false
+  );
+  const [foodAllergiesDetails, setFoodAllergiesDetails] = useState(
+    formData.foodAllergiesDetails || ''
+  );
+  const [hasHealthConcerns, setHasHealthConcerns] = useState(
+    formData.hasHealthConcerns || false
+  );
+  const [healthConcernsDetails, setHealthConcernsDetails] = useState(
+    formData.healthConcernsDetails || ''
+  );
 
   // Define category options
   const individualCategories = [
@@ -157,6 +175,10 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
           dateOfBirth: '',
           gender: '',
           type: '',
+          hasFoodAllergies: false,
+          foodAllergiesDetails: '',
+          hasHealthConcerns: false,
+          healthConcernsDetails: '',
         });
       }
     } else if (newNum < familyMembers.length) {
@@ -170,7 +192,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
   const handleFamilyMemberChange = (
     index: number,
     field: string,
-    value: string
+    value: any
   ) => {
     const updatedMembers = [...familyMembers];
     if (field === 'dateOfBirth') {
@@ -215,6 +237,10 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
     updateFormData({
       packageType,
       individualCategory,
+      hasFoodAllergies,
+      foodAllergiesDetails,
+      hasHealthConcerns,
+      healthConcernsDetails,
       familyMembers,
       totalFee,
       originalFee,
@@ -285,6 +311,58 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                 </span>
               </label>
             ))}
+          </div>
+
+          {/* Food Allergies Checkbox */}
+          <div className="mt-4">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={hasFoodAllergies}
+                onChange={(e) => setHasFoodAllergies(e.target.checked)}
+                className="form-checkbox h-5 w-5 text-amber-600"
+              />
+              <span className="ml-2">I have food allergies</span>
+            </label>
+            {hasFoodAllergies && (
+              <div className="mt-2">
+                <label className="block mb-1 font-medium">
+                  Please specify your food allergies
+                </label>
+                <textarea
+                  value={foodAllergiesDetails}
+                  onChange={(e) => setFoodAllergiesDetails(e.target.value)}
+                  className="w-full p-2 border rounded-lg"
+                  rows={3}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Health Concerns Checkbox */}
+          <div className="mt-4">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={hasHealthConcerns}
+                onChange={(e) => setHasHealthConcerns(e.target.checked)}
+                className="form-checkbox h-5 w-5 text-amber-600"
+              />
+              <span className="ml-2">I have health concerns</span>
+            </label>
+            {hasHealthConcerns && (
+              <div className="mt-2">
+                <label className="block mb-1 font-medium">
+                  Please specify your health concerns
+                </label>
+                <textarea
+                  value={healthConcernsDetails}
+                  onChange={(e) => setHealthConcernsDetails(e.target.value)}
+                  className="w-full p-2 border rounded-lg"
+                  rows={3}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -468,6 +546,82 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                           </option>
                         ))}
                       </select>
+                    </div>
+
+                    {/* Food Allergies Checkbox */}
+                    <div className="mt-4">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={member.hasFoodAllergies || false}
+                          onChange={(e) =>
+                            handleFamilyMemberChange(
+                              index,
+                              'hasFoodAllergies',
+                              e.target.checked
+                            )
+                          }
+                          className="form-checkbox h-5 w-5 text-amber-600"
+                        />
+                        <span className="ml-2">Has food allergies</span>
+                      </label>
+                      {member.hasFoodAllergies && (
+                        <div className="mt-2">
+                          <label className="block mb-1 font-medium">
+                            Please specify food allergies
+                          </label>
+                          <textarea
+                            value={member.foodAllergiesDetails || ''}
+                            onChange={(e) =>
+                              handleFamilyMemberChange(
+                                index,
+                                'foodAllergiesDetails',
+                                e.target.value
+                              )
+                            }
+                            className="w-full p-2 border rounded-lg"
+                            rows={3}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Health Concerns Checkbox */}
+                    <div className="mt-4">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={member.hasHealthConcerns || false}
+                          onChange={(e) =>
+                            handleFamilyMemberChange(
+                              index,
+                              'hasHealthConcerns',
+                              e.target.checked
+                            )
+                          }
+                          className="form-checkbox h-5 w-5 text-amber-600"
+                        />
+                        <span className="ml-2">Has health concerns</span>
+                      </label>
+                      {member.hasHealthConcerns && (
+                        <div className="mt-2">
+                          <label className="block mb-1 font-medium">
+                            Please specify health concerns
+                          </label>
+                          <textarea
+                            value={member.healthConcernsDetails || ''}
+                            onChange={(e) =>
+                              handleFamilyMemberChange(
+                                index,
+                                'healthConcernsDetails',
+                                e.target.value
+                              )
+                            }
+                            className="w-full p-2 border rounded-lg"
+                            rows={3}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
