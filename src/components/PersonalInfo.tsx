@@ -56,7 +56,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
       const today = new Date();
       const age = today.getFullYear() - birthDate.getFullYear();
       if (age < 12) {
-        newErrors.dateOfBirth = 'Users under 12 Years need a parent/ guardiant to must register.';
+        newErrors.dateOfBirth = 'Registrants under 12 Years need a parent/guardian to register.';
       }
     }
     if (!personalInfo.gender) {

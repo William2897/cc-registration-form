@@ -11,7 +11,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({ formData }) => {
     <div className="text-center">
       <CheckCircle className="text-amber-500 mx-auto mb-4" size={64} />
       <h2 className="text-2xl font-bold mb-4 text-amber-600">Thank you for registering!</h2>
-      <p className="mb-4">Your Curch Camp registration has been successfully submitted.</p>
+      <p className="mb-4">Your Church Camp registration has been successfully submitted.</p>
       <div className="bg-amber-50 p-4 rounded text-left">
         <h3 className="font-bold mb-2">Registration Summary</h3>
         <p>Name: {formData.personalInfo.fullName}</p>
