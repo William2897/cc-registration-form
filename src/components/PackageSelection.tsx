@@ -91,6 +91,14 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [packageType, individualCategory, familyMembers]);
 
+  // Add this function to calculate the family discount
+  const calculateFamilyDiscount = (headCount: number): number => {
+    if (headCount >= 5) return 0.20; // 20% discount
+    if (headCount === 4) return 0.15; // 15% discount
+    if (headCount === 3) return 0.10; // 10% discount
+    return 0; // no discount
+  };
+
   // Calculate total fee based on selected package and categories
   const calculateTotalFee = () => {
     let fee = 0;
@@ -123,8 +131,10 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
         }
       });
 
-      // Apply 35% discount
-      fee = fee * 0.65;
+      // Apply new discount logic
+      const headCount = familyMembers.length + 1; // +1 for main registrant
+      const discount = calculateFamilyDiscount(headCount);
+      fee = original * (1 - discount);
     }
 
     setTotalFee(fee);
@@ -643,7 +653,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
               Original Fee: RM {originalFee.toFixed(2)}
             </p>
             <p className="text-2xl font-bold text-green-600">
-              Discounted Fee (35% off): RM {totalFee.toFixed(2)}
+              Discounted Fee: RM {totalFee.toFixed(2)}
             </p>
           </>
         )}

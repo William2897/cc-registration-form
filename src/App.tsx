@@ -57,7 +57,7 @@ const App: React.FC = () => {
         {currentStep === 1 && <WelcomeScreen onStart={() => setCurrentStep(2)} />}
         {currentStep === 2 && (
           <PersonalInfo
-            formData={formData.personalInfo || {}}
+            formData={formData.personalInfo || {}} // Pass the entire personalInfo object
             updateFormData={updateFormData}
             onNext={() => setCurrentStep(3)}
           />

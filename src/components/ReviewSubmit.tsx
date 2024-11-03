@@ -81,7 +81,23 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
         ) : (
           <>
             <p className="text-xl"><strong>Original Fee:</strong> RM {originalFee.toFixed(2)}</p>
-            <p className="text-2xl font-bold text-green-600 mt-2"><strong>Discounted Fee (35% off):</strong> RM {totalFee.toFixed(2)}</p>
+            {(() => {
+              const headCount = familyMembers.length + 1; // +1 for the main registrant
+              let discountPercentage = 0;
+              if (headCount >= 5) discountPercentage = 20;
+              else if (headCount === 4) discountPercentage = 15;
+              else if (headCount === 3) discountPercentage = 10;
+              
+              return discountPercentage > 0 ? (
+                <p className="text-2xl font-bold text-green-600 mt-2">
+                  <strong>Discounted Fee ({discountPercentage}% off):</strong> RM {totalFee.toFixed(2)}
+                </p>
+              ) : (
+                <p className="text-2xl font-bold mt-2">
+                  <strong>Total Fee:</strong> RM {totalFee.toFixed(2)}
+                </p>
+              );
+            })()}
           </>
         )}
       </div>

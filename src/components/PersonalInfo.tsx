@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 interface PersonalInfoProps {
   formData: any;
@@ -20,10 +22,21 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
   const [showEmergencyContact, setShowEmergencyContact] = useState(false);
 
   useEffect(() => {
-    if (formData.personalInfo) {
-      setPersonalInfo(formData.personalInfo);
-      if (formData.personalInfo.dateOfBirth) {
-        const birthDate = new Date(formData.personalInfo.dateOfBirth);
+    // Initialize form data from props
+    if (formData) {
+      setPersonalInfo(prevInfo => ({
+        ...prevInfo,
+        fullName: formData.fullName || '',
+        dateOfBirth: formData.dateOfBirth || '',
+        gender: formData.gender || '',
+        maritalStatus: formData.maritalStatus || '',
+        phoneNumber: formData.phoneNumber || '',
+        emergencyContact: formData.emergencyContact || '',
+      }));
+
+      // Set emergency contact visibility based on age
+      if (formData.dateOfBirth) {
+        const birthDate = new Date(formData.dateOfBirth);
         const today = new Date();
         const age = today.getFullYear() - birthDate.getFullYear();
         setShowEmergencyContact(age < 18);
@@ -38,6 +51,13 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
     }
     if (!personalInfo.dateOfBirth) {
       newErrors.dateOfBirth = 'Date of birth is required';
+    } else {
+      const birthDate = new Date(personalInfo.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      if (age < 12) {
+        newErrors.dateOfBirth = 'Users under 12 Years need a parent/ guardiant to must register.';
+      }
     }
     if (!personalInfo.gender) {
       newErrors.gender = 'Gender is required';
@@ -45,11 +65,11 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
     if (!personalInfo.maritalStatus) {
       newErrors.maritalStatus = 'Marital status is required';
     }
-    if (!/^\d{11}$/.test(personalInfo.phoneNumber)) {
-      newErrors.phoneNumber = 'Phone number must be 11 digits';
+    if (!personalInfo.phoneNumber || personalInfo.phoneNumber.length < 10) {
+      newErrors.phoneNumber = 'Valid phone number is required';
     }
-    if (showEmergencyContact && !/^\d{11}$/.test(personalInfo.emergencyContact)) {
-      newErrors.emergencyContact = 'Emergency contact must be 11 digits';
+    if (showEmergencyContact && (!personalInfo.emergencyContact || personalInfo.emergencyContact.length < 10)) {
+      newErrors.emergencyContact = 'Valid emergency contact is required';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -158,14 +178,16 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
 
       <div>
         <label htmlFor="phoneNumber" className="block mb-1">Phone Number</label>
-        <input
-          type="tel"
-          id="phoneNumber"
-          name="phoneNumber"
+        <PhoneInput
+          country={'my'}
           value={personalInfo.phoneNumber}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
+          onChange={(phone) => setPersonalInfo(prev => ({ ...prev, phoneNumber: phone }))}
+          inputProps={{
+            required: true,
+            className: 'w-full p-2 border rounded',
+            placeholder: '+60 12-345 6789'
+          }}
+          containerClass={`phone-input ${errors.phoneNumber ? 'error' : ''}`}
         />
         {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
       </div>
@@ -173,14 +195,16 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
       {showEmergencyContact && (
         <div>
           <label htmlFor="emergencyContact" className="block mb-1">Emergency Contact</label>
-          <input
-            type="tel"
-            id="emergencyContact"
-            name="emergencyContact"
+          <PhoneInput
+            country={'my'}
             value={personalInfo.emergencyContact}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
+            onChange={(phone) => setPersonalInfo(prev => ({ ...prev, emergencyContact: phone }))}
+            inputProps={{
+              required: true,
+              className: 'w-full p-2 border rounded',
+              placeholder: '+60 12-345 6789'
+            }}
+            containerClass={`phone-input ${errors.emergencyContact ? 'error' : ''}`}
           />
           {errors.emergencyContact && <p className="text-red-500 text-sm">{errors.emergencyContact}</p>}
         </div>
