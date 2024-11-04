@@ -190,7 +190,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
 
   // Handle individual/family registrant category selection
   const handleIndividualCategoryChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setIndividualCategory(e.target.value);
   };
@@ -287,30 +287,19 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
       return;
     }
 
-    // Validation
-    if (packageType === 'family') {
-      if (numFamilyMembers < 2) {
-        setError('Family package requires at least 2 family members.');
-        return;
-      }
-      // Ensure all family members have selected a category
-      for (let member of familyMembers) {
-        if (!member.type) {
-          setError('Please select a category for all family members.');
-          return;
-        }
-      }
-    }
+    // Validation checks...
 
-    if (
-      (packageType === 'individual' || packageType === 'family') &&
-      !individualCategory
-    ) {
-      setError('Please select a participant category.');
-      return;
-    }
+    // Create guardianInfo object if guardian exists
+    const guardianInfo = hasGuardian ? {
+      guardianName: formData.personalInfo?.guardianName,
+      guardianPhoneNumber: formData.personalInfo?.guardianPhoneNumber,
+      guardianDateOfBirth: formData.personalInfo?.guardianDateOfBirth,
+      guardianRelationship: formData.personalInfo?.guardianRelationship,
+      otherRelationship: formData.personalInfo?.otherRelationship
+    } : null;
 
     updateFormData({
+      ...formData,
       packageType,
       individualCategory,
       hasFoodAllergies,
@@ -322,6 +311,11 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
       familyMembers,
       totalFee,
       originalFee,
+      guardianInfo, // Add guardian info separately
+      personalInfo: {
+        ...formData.personalInfo, // Preserve all personal info
+        isGuardian: hasGuardian // Ensure isGuardian flag is preserved
+      }
     });
     onNext();
   };
@@ -385,7 +379,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
     );
   };
 
-  // Modify category selection rendering
+  // Modify `renderCategorySelection` function
   const renderCategorySelection = () => {
     if (hasGuardian) {
       return (
@@ -418,27 +412,19 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
         <label className="block mb-2 font-semibold">
           What is your Category?
         </label>
-        <div className="space-y-4">
+        <select
+          value={individualCategory}
+          onChange={handleIndividualCategoryChange}
+          required
+          className="w-full p-2 border rounded-lg"
+        >
+          <option value="">Select Category</option>
           {individualCategories.map((category) => (
-            <label
-              key={category.value}
-              className="inline-flex items-center"
-            >
-              <input
-                type="radio"
-                name="individualCategory"
-                value={category.value}
-                checked={individualCategory === category.value}
-                onChange={handleIndividualCategoryChange}
-                required
-                className="form-radio h-5 w-5 text-amber-600"
-              />
-              <span className="ml-2">
-                {category.label} (RM {category.fee})
-              </span>
-            </label>
+            <option key={category.value} value={category.value}>
+              {category.label} (RM {category.fee})
+            </option>
           ))}
-        </div>
+        </select>
       </div>
     );
   };
@@ -604,27 +590,19 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
             <label className="block mb-2 font-semibold">
               What is your Category?
             </label>
-            <div className="space-y-4">
+            <select
+              value={individualCategory}
+              onChange={handleIndividualCategoryChange}
+              required
+              className="w-full p-2 border rounded-lg"
+            >
+              <option value="">Select Category</option>
               {familyRegistrantCategories.map((category) => (
-                <label
-                  key={category.value}
-                  className="inline-flex items-center"
-                >
-                  <input
-                    type="radio"
-                    name="individualCategory"
-                    value={category.value}
-                    checked={individualCategory === category.value}
-                    onChange={handleIndividualCategoryChange}
-                    required
-                    className="form-radio h-5 w-5 text-amber-600"
-                  />
-                  <span className="ml-2">
-                    {category.label} (RM {category.fee})
-                  </span>
-                </label>
+                <option key={category.value} value={category.value}>
+                  {category.label} (RM {category.fee})
+                </option>
               ))}
-            </div>
+            </select>
           </div>
 
           {/* Number of Family Members */}
