@@ -19,6 +19,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
     maritalStatus: '',
     phoneNumber: '',
     emergencyContact: '',
+    emergencyContactName: '', // Add this line
     isGuardian: false,
     guardianName: '',
     guardianPhoneNumber: '',
@@ -39,6 +40,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
         maritalStatus: formData.maritalStatus || '',
         phoneNumber: formData.phoneNumber || '',
         emergencyContact: formData.emergencyContact || '',
+        emergencyContactName: formData.emergencyContactName || '', // Add this line
         guardianName: formData.guardianName || '',
         guardianPhoneNumber: formData.guardianPhoneNumber || '',
         guardianRelationship: formData.guardianRelationship || '',
@@ -98,6 +100,13 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
     // Validate Emergency Contact (Now Mandatory for All)
     if (!personalInfo.emergencyContact || personalInfo.emergencyContact.replace(/\D/g, '').length < 10) {
       newErrors.emergencyContact = 'Valid emergency contact is required';
+    }
+
+    // Validate Emergency Contact Name
+    if (!personalInfo.emergencyContactName.trim()) {
+      newErrors.emergencyContactName = 'Emergency contact name is required';
+    } else if (!/^[a-zA-Z\s]+$/.test(personalInfo.emergencyContactName)) {
+      newErrors.emergencyContactName = 'Emergency contact name must contain only alphabetic characters';
     }
 
     if (age < 12) {
@@ -278,9 +287,24 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ formData, updateFormData, o
         {errors.emergencyContact && <p className="text-red-500 text-sm">{errors.emergencyContact}</p>}
       </div>
 
+      {/* Add this block after the emergency contact phone input */}
+      <div>
+        <label htmlFor="emergencyContactName" className="block mb-1">Emergency Contact Name</label>
+        <input
+          type="text"
+          id="emergencyContactName"
+          name="emergencyContactName"
+          value={personalInfo.emergencyContactName}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          required
+        />
+        {errors.emergencyContactName && <p className="text-red-500 text-sm">{errors.emergencyContactName}</p>}
+      </div>
+
       {age !== null && age < 12 && (
         <div className="bg-amber-50 p-4 rounded-lg space-y-4">
-          <h3 className="font-semibold">Parent/Guardian Information</h3>
+          <h3 className="font-semibold">Guardian Information</h3>
           <p className="text-sm text-gray-600">
             Required for participants under 12 years old
           </p>
