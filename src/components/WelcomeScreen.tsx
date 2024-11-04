@@ -64,12 +64,10 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
         <section className="bg-amber-50 p-6 rounded-lg">
           <h2 className="text-xl font-semibold mb-3 text-amber-700">Important Guidelines</h2>
           <ul className="list-disc list-inside space-y-2 text-gray-600">
-            <li className="text-red-600 font-semibold">
-              Children under 12 must register with a guardian who is 18 years or older
-            </li>
             <li>Emergency contact information is mandatory for all participants</li>
             <li>All participants must provide valid contact information</li>
             <li>Please indicate any dietary restrictions or health concerns during registration</li>
+            <li>Children under 12 without a parent must register with a guardian who is 18 years or older</li>
           </ul>
         </section>
       </div>
