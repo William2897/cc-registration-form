@@ -16,6 +16,12 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
     individualCategory,
     totalFee,
     originalFee,
+    hasFoodAllergies,
+    foodAllergiesDetails,
+    hasHealthConcerns,
+    healthConcernsDetails,
+    acceptsVeganMeal,
+    additionalDietaryRestrictions,
   } = formData;
 
   // Helper function to get category label from value
@@ -47,6 +53,38 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
         )}
       </div>
 
+      {/* Add Guardian Information Section */}
+      {personalInfo.isGuardian && (
+        <div className="bg-amber-50 p-6 rounded-lg shadow">
+          <h3 className="font-bold mb-4 text-xl">Guardian Information</h3>
+          <p><strong>Guardian Name:</strong> {personalInfo.guardianName}</p>
+          <p><strong>Guardian Phone:</strong> {personalInfo.guardianPhoneNumber}</p>
+          <p><strong>Guardian Date of Birth:</strong> {personalInfo.guardianDateOfBirth}</p>
+          <p><strong>Relationship:</strong> {
+            personalInfo.guardianRelationship === 'Other' 
+              ? personalInfo.otherRelationship 
+              : personalInfo.guardianRelationship
+          }</p>
+        </div>
+      )}
+
+      {/* Dietary Information */}
+      <div className="bg-green-50 p-6 rounded-lg shadow">
+        <h3 className="font-bold mb-4 text-xl">Dietary Information</h3>
+        <div className="space-y-2">
+          <p><strong>Accepts Vegan Meals:</strong> {acceptsVeganMeal ? 'Yes' : 'No'}</p>
+          {additionalDietaryRestrictions && (
+            <p><strong>Additional Dietary Restrictions:</strong> {additionalDietaryRestrictions}</p>
+          )}
+          {hasFoodAllergies && (
+            <p><strong>Food Allergies:</strong> {foodAllergiesDetails}</p>
+          )}
+          {hasHealthConcerns && (
+            <p><strong>Health Concerns:</strong> {healthConcernsDetails}</p>
+          )}
+        </div>
+      </div>
+
       {/* Package Information */}
       <div className="bg-amber-50 p-6 rounded-lg shadow">
         <h3 className="font-bold mb-4 text-xl">Package Information</h3>
@@ -60,10 +98,22 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
               {familyMembers.map((member: any, index: number) => (
                 <div key={index} className="bg-gray-100 p-4 rounded-lg shadow">
                   <h4 className="font-semibold mb-2">Family Member {index + 1}</h4>
-                  <p><strong>Name:</strong> {member.fullName}</p>
-                  <p><strong>Date of Birth:</strong> {member.dateOfBirth}</p>
-                  <p><strong>Gender:</strong> {member.gender}</p>
-                  <p><strong>Participant Category:</strong> {getCategoryLabel(member.type)}</p>
+                  <div className="space-y-2">
+                    <p><strong>Name:</strong> {member.fullName}</p>
+                    <p><strong>Date of Birth:</strong> {member.dateOfBirth}</p>
+                    <p><strong>Gender:</strong> {member.gender}</p>
+                    <p><strong>Participant Category:</strong> {getCategoryLabel(member.type)}</p>
+                    <p><strong>Accepts Vegan Meals:</strong> {member.acceptsVeganMeal ? 'Yes' : 'No'}</p>
+                    {member.additionalDietaryRestrictions && (
+                      <p><strong>Additional Dietary Restrictions:</strong> {member.additionalDietaryRestrictions}</p>
+                    )}
+                    {member.hasFoodAllergies && (
+                      <p><strong>Food Allergies:</strong> {member.foodAllergiesDetails}</p>
+                    )}
+                    {member.hasHealthConcerns && (
+                      <p><strong>Health Concerns:</strong> {member.healthConcernsDetails}</p>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -94,8 +144,7 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
                 </p>
               ) : (
                 <p className="text-2xl font-bold mt-2">
-                  <strong>Total Fee:</strong> RM {totalFee.toFixed(2)}
-                </p>
+                  <strong>Total Fee:</strong> RM {totalFee.toFixed(2)}</p>
               );
             })()}
           </>

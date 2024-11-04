@@ -18,6 +18,8 @@ interface FamilyMember {
   foodAllergiesDetails: string;
   hasHealthConcerns: boolean;
   healthConcernsDetails: string;
+  acceptsVeganMeal: boolean;
+  additionalDietaryRestrictions: string;
 }
 
 const PackageSelection: React.FC<PackageSelectionProps> = ({
@@ -55,6 +57,24 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
     formData.healthConcernsDetails || ''
   );
 
+  // Add new state for validation errors
+  const [validationErrors, setValidationErrors] = useState({
+    foodAllergies: '',
+    healthConcerns: '',
+  });
+
+  // Add new state variables for vegan meal confirmation
+  const [acceptsVeganMeal, setAcceptsVeganMeal] = useState(
+    formData.acceptsVeganMeal || false
+  );
+  const [additionalDietaryRestrictions, setAdditionalDietaryRestrictions] = useState(
+    formData.additionalDietaryRestrictions || ''
+  );
+
+  // Check if guardian exists in personal info
+  const hasGuardian = formData.personalInfo?.guardianName && 
+                     formData.personalInfo?.guardianPhoneNumber;
+
   // Define category options
   const individualCategories = [
     { label: 'Aged 3-12', value: 'aged_3_12', fee: 110 },
@@ -90,6 +110,15 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
     calculateTotalFee();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [packageType, individualCategory, familyMembers]);
+
+  useEffect(() => {
+    // If guardian exists, force individual package and age 3-12 category
+    if (hasGuardian) {
+      setPackageType('individual');
+      setIndividualCategory('aged_3_12');
+      calculateTotalFee();
+    }
+  }, [hasGuardian]);
 
   // Add this function to calculate the family discount
   const calculateFamilyDiscount = (headCount: number): number => {
@@ -189,6 +218,8 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
           foodAllergiesDetails: '',
           hasHealthConcerns: false,
           healthConcernsDetails: '',
+          acceptsVeganMeal: false,
+          additionalDietaryRestrictions: '',
         });
       }
     } else if (newNum < familyMembers.length) {
@@ -213,13 +244,44 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
         value = today.toISOString().split('T')[0];
       }
     }
-    updatedMembers[index] = { ...updatedMembers[index], [field]: value };
+    if (field === 'acceptsVeganMeal') {
+      updatedMembers[index] = {
+        ...updatedMembers[index],
+        acceptsVeganMeal: value,
+      };
+    } else {
+      updatedMembers[index] = { ...updatedMembers[index], [field]: value };
+    }
     setFamilyMembers(updatedMembers);
+  };
+
+  // Add validation function
+  const hasValidationErrors = () => {
+    const errors = {
+      foodAllergies: '',
+      healthConcerns: '',
+    };
+
+    if (hasFoodAllergies && !foodAllergiesDetails.trim()) {
+      errors.foodAllergies = 'Please specify your food allergies';
+    }
+
+    if (hasHealthConcerns && !healthConcernsDetails.trim()) {
+      errors.healthConcerns = 'Please specify your health concerns';
+    }
+
+    setValidationErrors(errors);
+
+    return errors.foodAllergies || errors.healthConcerns;
   };
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (hasValidationErrors()) {
+      return;
+    }
 
     // Validation
     if (packageType === 'family') {
@@ -251,6 +313,8 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
       foodAllergiesDetails,
       hasHealthConcerns,
       healthConcernsDetails,
+      acceptsVeganMeal,
+      additionalDietaryRestrictions,
       familyMembers,
       totalFee,
       originalFee,
@@ -258,13 +322,33 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
     onNext();
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <h2 className="text-2xl font-bold mb-4 text-amber-600">
-        Package Selection
-      </h2>
+  // Modify package type selection rendering
+  const renderPackageTypeSelection = () => {
+    if (hasGuardian) {
+      return (
+        <div>
+          <label className="block mb-2 font-semibold">Package Type</label>
+          <div className="space-x-6">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name="packageType"
+                value="individual"
+                checked={true}
+                disabled
+                className="form-radio h-5 w-5 text-amber-600"
+              />
+              <span className="ml-2">Individual</span>
+            </label>
+          </div>
+          <p className="text-sm text-gray-600 mt-2">
+            Package type is set to Individual as guardian information is provided
+          </p>
+        </div>
+      );
+    }
 
-      {/* Package Type Selection */}
+    return (
       <div>
         <label className="block mb-2 font-semibold">Package Type</label>
         <div className="space-x-6">
@@ -294,91 +378,222 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
           </label>
         </div>
       </div>
+    );
+  };
+
+  // Modify category selection rendering
+  const renderCategorySelection = () => {
+    if (hasGuardian) {
+      return (
+        <div>
+          <label className="block mb-2 font-semibold">Category</label>
+          <div className="space-y-4">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name="individualCategory"
+                value="aged_3_12"
+                checked={true}
+                disabled
+                className="form-radio h-5 w-5 text-amber-600"
+              />
+              <span className="ml-2">
+                Aged 3-12 (RM 110)
+              </span>
+            </label>
+          </div>
+          <p className="text-sm text-gray-600 mt-2">
+            Category is automatically set as guardian information is provided
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <label className="block mb-2 font-semibold">
+          What is your Category?
+        </label>
+        <div className="space-y-4">
+          {individualCategories.map((category) => (
+            <label
+              key={category.value}
+              className="inline-flex items-center"
+            >
+              <input
+                type="radio"
+                name="individualCategory"
+                value={category.value}
+                checked={individualCategory === category.value}
+                onChange={handleIndividualCategoryChange}
+                required
+                className="form-radio h-5 w-5 text-amber-600"
+              />
+              <span className="ml-2">
+                {category.label} (RM {category.fee})
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Modify the health-related checkboxes section in the render
+  const renderHealthSection = () => (
+    <>
+      {/* Food Allergies Checkbox */}
+      <div className="mt-4">
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            checked={hasFoodAllergies}
+            onChange={(e) => {
+              setHasFoodAllergies(e.target.checked);
+              if (!e.target.checked) {
+                setFoodAllergiesDetails('');
+                setValidationErrors(prev => ({ ...prev, foodAllergies: '' }));
+              }
+            }}
+            className="form-checkbox h-5 w-5 text-amber-600"
+          />
+          <span className="ml-2">I have food allergies</span>
+        </label>
+        {hasFoodAllergies && (
+          <div className="mt-2">
+            <label className="block mb-1 font-medium">
+              Please specify your food allergies
+            </label>
+            <textarea
+              value={foodAllergiesDetails}
+              onChange={(e) => {
+                setFoodAllergiesDetails(e.target.value);
+                if (e.target.value.trim()) {
+                  setValidationErrors(prev => ({ ...prev, foodAllergies: '' }));
+                }
+              }}
+              className={`w-full p-2 border rounded-lg ${
+                validationErrors.foodAllergies ? 'border-red-500' : ''
+              }`}
+              rows={3}
+            />
+            {validationErrors.foodAllergies && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.foodAllergies}</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Health Concerns Checkbox */}
+      <div className="mt-4">
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            checked={hasHealthConcerns}
+            onChange={(e) => {
+              setHasHealthConcerns(e.target.checked);
+              if (!e.target.checked) {
+                setHealthConcernsDetails('');
+                setValidationErrors(prev => ({ ...prev, healthConcerns: '' }));
+              }
+            }}
+            className="form-checkbox h-5 w-5 text-amber-600"
+          />
+          <span className="ml-2">I have health concerns</span>
+        </label>
+        {hasHealthConcerns && (
+          <div className="mt-2">
+            <label className="block mb-1 font-medium">
+              Please specify your health concerns
+            </label>
+            <textarea
+              value={healthConcernsDetails}
+              onChange={(e) => {
+                setHealthConcernsDetails(e.target.value);
+                if (e.target.value.trim()) {
+                  setValidationErrors(prev => ({ ...prev, healthConcerns: '' }));
+                }
+              }}
+              className={`w-full p-2 border rounded-lg ${
+                validationErrors.healthConcerns ? 'border-red-500' : ''
+              }`}
+              rows={3}
+            />
+            {validationErrors.healthConcerns && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.healthConcerns}</p>
+            )}
+          </div>
+        )}
+      </div>
+    </>
+  );
+
+  // Add a new render function for vegan meal confirmation
+  const renderVeganMealConfirmation = () => (
+    <div className="bg-green-50 p-4 rounded-lg mt-6">
+      <h4 className="font-semibold text-lg mb-2">Meal Information</h4>
+      <p className="text-sm text-gray-600 mb-4">
+        All meals provided will be vegan-friendly to ensure inclusivity for all participants.
+      </p>
+      
+      <div className="space-y-4">
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            checked={acceptsVeganMeal}
+            onChange={(e) => setAcceptsVeganMeal(e.target.checked)}
+            className="form-checkbox h-5 w-5 text-green-600"
+            required
+          />
+          <span className="ml-2">
+            I understand and accept that all meals will be vegan-friendly
+          </span>
+        </label>
+
+        <div>
+          <label className="block mb-1 font-medium">
+            Additional Dietary Restrictions or Concerns (Optional)
+          </label>
+          <textarea
+            value={additionalDietaryRestrictions}
+            onChange={(e) => setAdditionalDietaryRestrictions(e.target.value)}
+            className="w-full p-2 border rounded-lg"
+            rows={2}
+            placeholder="Please specify any additional dietary restrictions or concerns"
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  // Modify the navigation buttons section
+  const isNextButtonDisabled = () => {
+    if (packageType === 'family' && numFamilyMembers < 2) return true;
+    if (hasFoodAllergies && !foodAllergiesDetails.trim()) return true;
+    if (hasHealthConcerns && !healthConcernsDetails.trim()) return true;
+    if (!acceptsVeganMeal) return true;
+    return false;
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <h2 className="text-2xl font-bold mb-4 text-amber-600">
+        Package Selection
+      </h2>
+
+      {renderPackageTypeSelection()}
 
       {/* Individual Package Selection */}
       {packageType === 'individual' && (
         <div>
-          <label className="block mb-2 font-semibold">
-            What is your Category?
-          </label>
-          <div className="space-y-4">
-            {individualCategories.map((category) => (
-              <label
-                key={category.value}
-                className="inline-flex items-center"
-              >
-                <input
-                  type="radio"
-                  name="individualCategory"
-                  value={category.value}
-                  checked={individualCategory === category.value}
-                  onChange={handleIndividualCategoryChange}
-                  required
-                  className="form-radio h-5 w-5 text-amber-600"
-                />
-                <span className="ml-2">
-                  {category.label} (RM {category.fee})
-                </span>
-              </label>
-            ))}
-          </div>
-
-          {/* Food Allergies Checkbox */}
-          <div className="mt-4">
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                checked={hasFoodAllergies}
-                onChange={(e) => setHasFoodAllergies(e.target.checked)}
-                className="form-checkbox h-5 w-5 text-amber-600"
-              />
-              <span className="ml-2">I have food allergies</span>
-            </label>
-            {hasFoodAllergies && (
-              <div className="mt-2">
-                <label className="block mb-1 font-medium">
-                  Please specify your food allergies
-                </label>
-                <textarea
-                  value={foodAllergiesDetails}
-                  onChange={(e) => setFoodAllergiesDetails(e.target.value)}
-                  className="w-full p-2 border rounded-lg"
-                  rows={3}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Health Concerns Checkbox */}
-          <div className="mt-4">
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                checked={hasHealthConcerns}
-                onChange={(e) => setHasHealthConcerns(e.target.checked)}
-                className="form-checkbox h-5 w-5 text-amber-600"
-              />
-              <span className="ml-2">I have health concerns</span>
-            </label>
-            {hasHealthConcerns && (
-              <div className="mt-2">
-                <label className="block mb-1 font-medium">
-                  Please specify your health concerns
-                </label>
-                <textarea
-                  value={healthConcernsDetails}
-                  onChange={(e) => setHealthConcernsDetails(e.target.value)}
-                  className="w-full p-2 border rounded-lg"
-                  rows={3}
-                />
-              </div>
-            )}
-          </div>
+          {renderCategorySelection()}
+          {renderVeganMealConfirmation()}
+          {renderHealthSection()}
         </div>
       )}
 
       {/* Family Package Selection */}
-      {packageType === 'family' && (
+      {!hasGuardian && packageType === 'family' && (
         <>
           {/* Registrant Category Selection */}
           <div>
@@ -633,6 +848,47 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                         </div>
                       )}
                     </div>
+
+                    {/* Add vegan meal confirmation for family member */}
+                    <div className="mt-4 bg-green-50 p-4 rounded-lg">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={member.acceptsVeganMeal || false}
+                          onChange={(e) =>
+                            handleFamilyMemberChange(
+                              index,
+                              'acceptsVeganMeal',
+                              e.target.checked
+                            )
+                          }
+                          className="form-checkbox h-5 w-5 text-green-600"
+                          required
+                        />
+                        <span className="ml-2">
+                          Accepts vegan-friendly meals
+                        </span>
+                      </label>
+                      
+                      <div className="mt-2">
+                        <label className="block mb-1 font-medium">
+                          Additional Dietary Restrictions (Optional)
+                        </label>
+                        <textarea
+                          value={member.additionalDietaryRestrictions || ''}
+                          onChange={(e) =>
+                            handleFamilyMemberChange(
+                              index,
+                              'additionalDietaryRestrictions',
+                              e.target.value
+                            )
+                          }
+                          className="w-full p-2 border rounded-lg"
+                          rows={2}
+                          placeholder="Please specify any additional dietary restrictions"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -672,11 +928,11 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
         <button
           type="submit"
           className={`flex items-center ${
-            packageType === 'family' && numFamilyMembers < 2
+            isNextButtonDisabled()
               ? 'bg-gray-300 cursor-not-allowed'
               : 'bg-amber-500 hover:bg-amber-600'
           } text-white font-bold py-2 px-4 rounded`}
-          disabled={packageType === 'family' && numFamilyMembers < 2}
+          disabled={isNextButtonDisabled()}
         >
           Next
           <ArrowRight className="ml-2" size={20} />
