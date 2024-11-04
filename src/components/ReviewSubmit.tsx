@@ -54,17 +54,17 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
         )}
       </div>
 
-      {/* Add Guardian Information Section */}
-      {personalInfo.isGuardian && (
+      {/* Update the guardian section check */}
+      {(personalInfo?.guardianName || formData.guardianInfo?.guardianName) && (
         <div className="bg-amber-50 p-6 rounded-lg shadow">
           <h3 className="font-bold mb-4 text-xl">Guardian Information</h3>
-          <p><strong>Guardian Name:</strong> {personalInfo.guardianName}</p>
-          <p><strong>Guardian Phone:</strong> {personalInfo.guardianPhoneNumber}</p>
-          <p><strong>Guardian Date of Birth:</strong> {personalInfo.guardianDateOfBirth}</p>
+          <p><strong>Guardian Name:</strong> {personalInfo?.guardianName || formData.guardianInfo?.guardianName}</p>
+          <p><strong>Guardian Phone:</strong> {personalInfo?.guardianPhoneNumber || formData.guardianInfo?.guardianPhoneNumber}</p>
+          <p><strong>Guardian Date of Birth:</strong> {personalInfo?.guardianDateOfBirth || formData.guardianInfo?.guardianDateOfBirth}</p>
           <p><strong>Relationship:</strong> {
-            personalInfo.guardianRelationship === 'Other' 
-              ? personalInfo.otherRelationship 
-              : personalInfo.guardianRelationship
+            (personalInfo?.guardianRelationship || formData.guardianInfo?.guardianRelationship) === 'Other' 
+              ? (personalInfo?.otherRelationship || formData.guardianInfo?.otherRelationship)
+              : (personalInfo?.guardianRelationship || formData.guardianInfo?.guardianRelationship)
           }</p>
         </div>
       )}
