@@ -77,7 +77,9 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
 
   // Define category options
   const individualCategories = [
-    { label: 'Aged 3-12', value: 'aged_3_12', fee: 110 },
+    ...(hasGuardian 
+      ? [{ label: 'Aged 3-12', value: 'aged_3_12', fee: 110 }] 
+      : []),
     {
       label: 'Aged 12+ / Student / Homemaker / Ministry Worker',
       value: 'aged_12_plus',
@@ -97,7 +99,9 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
 
   const familyMemberCategories = [
     { label: 'Aged 2 and below', value: 'aged_2_below', fee: 0 },
-    { label: 'Aged 3-12', value: 'aged_3_12', fee: 110 },
+    ...(hasGuardian 
+      ? [{ label: 'Aged 3-12', value: 'aged_3_12', fee: 110 }] 
+      : []),
     {
       label: 'Aged 12+ / Student / Homemaker / Ministry Worker',
       value: 'aged_12_plus',
