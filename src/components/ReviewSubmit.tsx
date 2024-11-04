@@ -39,6 +39,7 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold mb-4 text-amber-600">Review and Submit</h2>
+      <h4 className="text-lg italic mb-4 text-green-800">Please take a screenshot of this information for your own convenience.</h4>
 
       {/* Personal Information */}
       <div className="bg-amber-50 p-6 rounded-lg shadow">
@@ -69,21 +70,22 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
       )}
 
       {/* Dietary Information */}
-      <div className="bg-green-50 p-6 rounded-lg shadow">
-        <h3 className="font-bold mb-4 text-xl">Dietary Information</h3>
-        <div className="space-y-2">
-          <p><strong>Accepts Vegan Meals:</strong> {acceptsVeganMeal ? 'Yes' : 'No'}</p>
-          {additionalDietaryRestrictions && (
-            <p><strong>Additional Dietary Restrictions:</strong> {additionalDietaryRestrictions}</p>
-          )}
-          {hasFoodAllergies && (
-            <p><strong>Food Allergies:</strong> {foodAllergiesDetails}</p>
-          )}
-          {hasHealthConcerns && (
-            <p><strong>Health Concerns:</strong> {healthConcernsDetails}</p>
-          )}
+      {(additionalDietaryRestrictions || hasFoodAllergies || hasHealthConcerns) && (
+        <div className="bg-green-50 p-6 rounded-lg shadow">
+          <h3 className="font-bold mb-4 text-xl">Dietary Information</h3>
+          <div className="space-y-2">
+        {additionalDietaryRestrictions && (
+          <p><strong>Additional Dietary Restrictions:</strong> {additionalDietaryRestrictions}</p>
+        )}
+        {hasFoodAllergies && (
+          <p><strong>Food Allergies:</strong> {foodAllergiesDetails}</p>
+        )}
+        {hasHealthConcerns && (
+          <p><strong>Health Concerns:</strong> {healthConcernsDetails}</p>
+        )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Package Information */}
       <div className="bg-amber-50 p-6 rounded-lg shadow">
