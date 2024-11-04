@@ -20,7 +20,6 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
     foodAllergiesDetails,
     hasHealthConcerns,
     healthConcernsDetails,
-    acceptsVeganMeal,
     additionalDietaryRestrictions,
   } = formData;
 
