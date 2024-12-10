@@ -16,10 +16,10 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
     individualCategory,
     totalFee,
     originalFee,
-    hasFoodAllergies,
-    foodAllergiesDetails,
-    hasHealthConcerns,
-    healthConcernsDetails,
+    hasAllergies,
+    allergiesDetails,
+    hasMedicalConditions,
+    medicalConditionsDetails,
     additionalDietaryRestrictions,
   } = formData;
 
@@ -69,18 +69,18 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
       )}
 
       {/* Dietary Information */}
-      {(additionalDietaryRestrictions || hasFoodAllergies || hasHealthConcerns) && (
+      {(additionalDietaryRestrictions || hasAllergies || hasMedicalConditions) && (
         <div className="bg-green-50 p-6 rounded-lg shadow">
-          <h3 className="font-bold mb-4 text-xl">Dietary Information</h3>
+          <h3 className="font-bold mb-4 text-xl">Dietary and Health Information</h3>
           <div className="space-y-2">
         {additionalDietaryRestrictions && (
           <p><strong>Additional Dietary Restrictions:</strong> {additionalDietaryRestrictions}</p>
         )}
-        {hasFoodAllergies && (
-          <p><strong>Food Allergies:</strong> {foodAllergiesDetails}</p>
+        {hasAllergies && (
+          <p><strong>Allergies:</strong> {allergiesDetails}</p>
         )}
-        {hasHealthConcerns && (
-          <p><strong>Health Concerns:</strong> {healthConcernsDetails}</p>
+        {hasMedicalConditions && (
+          <p><strong>Medical Conditions:</strong> {medicalConditionsDetails}</p>
         )}
           </div>
         </div>
@@ -108,11 +108,11 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
                     {member.additionalDietaryRestrictions && (
                       <p><strong>Additional Dietary Restrictions:</strong> {member.additionalDietaryRestrictions}</p>
                     )}
-                    {member.hasFoodAllergies && (
-                      <p><strong>Food Allergies:</strong> {member.foodAllergiesDetails}</p>
+                    {member.hasAllergies && (
+                      <p><strong>Allergies:</strong> {member.allergiesDetails}</p>
                     )}
-                    {member.hasHealthConcerns && (
-                      <p><strong>Health Concerns:</strong> {member.healthConcernsDetails}</p>
+                    {member.hasMedicalConditions && (
+                      <p><strong>Medical Conditions:</strong> {member.medicalConditionsDetails}</p>
                     )}
                   </div>
                 </div>

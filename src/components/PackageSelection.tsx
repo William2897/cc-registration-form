@@ -14,10 +14,10 @@ interface FamilyMember {
   dateOfBirth: string;
   gender: string;
   type: string;
-  hasFoodAllergies: boolean;
-  foodAllergiesDetails: string;
-  hasHealthConcerns: boolean;
-  healthConcernsDetails: string;
+  hasAllergies: boolean;
+  allergiesDetails: string;
+  hasMedicalConditions: boolean;
+  medicalConditionsDetails: string;
   acceptsVeganMeal: boolean;
   additionalDietaryRestrictions: string;
 }
@@ -44,23 +44,23 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
   const [error, setError] = useState('');
 
   // New state variables for individual package
-  const [hasFoodAllergies, setHasFoodAllergies] = useState(
-    formData.hasFoodAllergies || false
+  const [hasAllergies, setHasAllergies] = useState(
+    formData.hasAllergies || false
   );
-  const [foodAllergiesDetails, setFoodAllergiesDetails] = useState(
-    formData.foodAllergiesDetails || ''
+  const [allergiesDetails, setAllergiesDetails] = useState(
+    formData.allergiesDetails || ''
   );
-  const [hasHealthConcerns, setHasHealthConcerns] = useState(
-    formData.hasHealthConcerns || false
+  const [hasMedicalConditions, setHasMedicalConditions] = useState(
+    formData.hasMedicalConditions || false
   );
-  const [healthConcernsDetails, setHealthConcernsDetails] = useState(
-    formData.healthConcernsDetails || ''
+  const [medicalConditionsDetails, setMedicalConditionsDetails] = useState(
+    formData.medicalConditionsDetails || ''
   );
 
   // Add new state for validation errors
   const [validationErrors, setValidationErrors] = useState({
-    foodAllergies: '',
-    healthConcerns: '',
+    allergies: '',
+    medicalConditions: '',
   });
 
   // Add new state variables for vegan meal confirmation
@@ -216,10 +216,10 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
           dateOfBirth: '',
           gender: '',
           type: '',
-          hasFoodAllergies: false,
-          foodAllergiesDetails: '',
-          hasHealthConcerns: false,
-          healthConcernsDetails: '',
+          hasAllergies: false,
+          allergiesDetails: '',
+          hasMedicalConditions: false,
+          medicalConditionsDetails: '',
           acceptsVeganMeal: false,
           additionalDietaryRestrictions: '',
         });
@@ -260,21 +260,21 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
   // Add validation function
   const hasValidationErrors = () => {
     const errors = {
-      foodAllergies: '',
-      healthConcerns: '',
+      allergies: '',
+      medicalConditions: '',
     };
 
-    if (hasFoodAllergies && !foodAllergiesDetails.trim()) {
-      errors.foodAllergies = 'Please specify your food allergies';
+    if (hasAllergies && !allergiesDetails.trim()) {
+      errors.allergies = 'Please specify your allergies';
     }
 
-    if (hasHealthConcerns && !healthConcernsDetails.trim()) {
-      errors.healthConcerns = 'Please specify your health concerns';
+    if (hasMedicalConditions && !medicalConditionsDetails.trim()) {
+      errors.medicalConditions = 'Please specify your medical conditions';
     }
 
     setValidationErrors(errors);
 
-    return errors.foodAllergies || errors.healthConcerns;
+    return errors.allergies || errors.medicalConditions;
   };
 
   // Handle form submission
@@ -300,10 +300,10 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
       ...formData,
       packageType,
       individualCategory,
-      hasFoodAllergies,
-      foodAllergiesDetails,
-      hasHealthConcerns,
-      healthConcernsDetails,
+      hasAllergies,
+      allergiesDetails,
+      hasMedicalConditions,
+      medicalConditionsDetails,
       acceptsVeganMeal,
       additionalDietaryRestrictions,
       familyMembers,
@@ -430,85 +430,85 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
   // Modify the health-related checkboxes section in the render
   const renderHealthSection = () => (
     <>
-      {/* Food Allergies Checkbox */}
+      {/* Allergies Checkbox */}
       <div className="mt-4">
         <label className="inline-flex items-center">
           <input
             type="checkbox"
-            checked={hasFoodAllergies}
+            checked={hasAllergies}
             onChange={(e) => {
-              setHasFoodAllergies(e.target.checked);
+              setHasAllergies(e.target.checked);
               if (!e.target.checked) {
-                setFoodAllergiesDetails('');
-                setValidationErrors(prev => ({ ...prev, foodAllergies: '' }));
+                setAllergiesDetails('');
+                setValidationErrors(prev => ({ ...prev, allergies: '' }));
               }
             }}
             className="form-checkbox h-5 w-5 text-amber-600"
           />
-          <span className="ml-2">I have food allergies</span>
+          <span className="ml-2">I have allergies</span>
         </label>
-        {hasFoodAllergies && (
+        {hasAllergies && (
           <div className="mt-2">
             <label className="block mb-1 font-medium">
-              Please specify your food allergies
+              Please specify your allergies
             </label>
             <textarea
-              value={foodAllergiesDetails}
+              value={allergiesDetails}
               onChange={(e) => {
-                setFoodAllergiesDetails(e.target.value);
+                setAllergiesDetails(e.target.value);
                 if (e.target.value.trim()) {
-                  setValidationErrors(prev => ({ ...prev, foodAllergies: '' }));
+                  setValidationErrors(prev => ({ ...prev, allergies: '' }));
                 }
               }}
               className={`w-full p-2 border rounded-lg ${
-                validationErrors.foodAllergies ? 'border-red-500' : ''
+                validationErrors.allergies ? 'border-red-500' : ''
               }`}
               rows={3}
             />
-            {validationErrors.foodAllergies && (
-              <p className="text-red-500 text-sm mt-1">{validationErrors.foodAllergies}</p>
+            {validationErrors.allergies && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.allergies}</p>
             )}
           </div>
         )}
       </div>
 
-      {/* Health Concerns Checkbox */}
+      {/* Medical Conditions Checkbox */}
       <div className="mt-4">
         <label className="inline-flex items-center">
           <input
             type="checkbox"
-            checked={hasHealthConcerns}
+            checked={hasMedicalConditions}
             onChange={(e) => {
-              setHasHealthConcerns(e.target.checked);
+              setHasMedicalConditions(e.target.checked);
               if (!e.target.checked) {
-                setHealthConcernsDetails('');
-                setValidationErrors(prev => ({ ...prev, healthConcerns: '' }));
+                setMedicalConditionsDetails('');
+                setValidationErrors(prev => ({ ...prev, medicalConditions: '' }));
               }
             }}
             className="form-checkbox h-5 w-5 text-amber-600"
           />
-          <span className="ml-2">I have health concerns</span>
+          <span className="ml-2">I have medical conditions</span>
         </label>
-        {hasHealthConcerns && (
+        {hasMedicalConditions && (
           <div className="mt-2">
             <label className="block mb-1 font-medium">
-              Please specify your health concerns
+              Please specify your medical conditions
             </label>
             <textarea
-              value={healthConcernsDetails}
+              value={medicalConditionsDetails}
               onChange={(e) => {
-                setHealthConcernsDetails(e.target.value);
+                setMedicalConditionsDetails(e.target.value);
                 if (e.target.value.trim()) {
-                  setValidationErrors(prev => ({ ...prev, healthConcerns: '' }));
+                  setValidationErrors(prev => ({ ...prev, medicalConditions: '' }));
                 }
               }}
               className={`w-full p-2 border rounded-lg ${
-                validationErrors.healthConcerns ? 'border-red-500' : ''
+                validationErrors.medicalConditions ? 'border-red-500' : ''
               }`}
               rows={3}
             />
-            {validationErrors.healthConcerns && (
-              <p className="text-red-500 text-sm mt-1">{validationErrors.healthConcerns}</p>
+            {validationErrors.medicalConditions && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.medicalConditions}</p>
             )}
           </div>
         )}
@@ -557,8 +557,8 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
   // Modify the navigation buttons section
   const isNextButtonDisabled = () => {
     if (packageType === 'family' && numFamilyMembers < 2) return true;
-    if (hasFoodAllergies && !foodAllergiesDetails.trim()) return true;
-    if (hasHealthConcerns && !healthConcernsDetails.trim()) return true;
+    if (hasAllergies && !allergiesDetails.trim()) return true;
+    if (hasMedicalConditions && !medicalConditionsDetails.trim()) return true;
     if (!acceptsVeganMeal) return true;
     return false;
   };
@@ -753,34 +753,34 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                       </select>
                     </div>
 
-                    {/* Food Allergies Checkbox */}
+                    {/* Allergies Checkbox */}
                     <div className="mt-4">
                       <label className="inline-flex items-center">
                         <input
                           type="checkbox"
-                          checked={member.hasFoodAllergies || false}
+                          checked={member.hasAllergies || false}
                           onChange={(e) =>
                             handleFamilyMemberChange(
                               index,
-                              'hasFoodAllergies',
+                              'hasAllergies',
                               e.target.checked
                             )
                           }
                           className="form-checkbox h-5 w-5 text-amber-600"
                         />
-                        <span className="ml-2">Has food allergies</span>
+                        <span className="ml-2">I have allergies</span>
                       </label>
-                      {member.hasFoodAllergies && (
+                      {member.hasAllergies && (
                         <div className="mt-2">
                           <label className="block mb-1 font-medium">
-                            Please specify food allergies
+                            Please specify your allergies
                           </label>
                           <textarea
-                            value={member.foodAllergiesDetails || ''}
+                            value={member.allergiesDetails || ''}
                             onChange={(e) =>
                               handleFamilyMemberChange(
                                 index,
-                                'foodAllergiesDetails',
+                                'allergiesDetails',
                                 e.target.value
                               )
                             }
@@ -791,34 +791,34 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                       )}
                     </div>
 
-                    {/* Health Concerns Checkbox */}
+                    {/* Medical Conditions Checkbox */}
                     <div className="mt-4">
                       <label className="inline-flex items-center">
                         <input
                           type="checkbox"
-                          checked={member.hasHealthConcerns || false}
+                          checked={member.hasMedicalConditions || false}
                           onChange={(e) =>
                             handleFamilyMemberChange(
                               index,
-                              'hasHealthConcerns',
+                              'hasMedicalConditions',
                               e.target.checked
                             )
                           }
                           className="form-checkbox h-5 w-5 text-amber-600"
                         />
-                        <span className="ml-2">Has health concerns</span>
+                        <span className="ml-2">I have medical conditions</span>
                       </label>
-                      {member.hasHealthConcerns && (
+                      {member.hasMedicalConditions && (
                         <div className="mt-2">
                           <label className="block mb-1 font-medium">
-                            Please specify health concerns
+                            Please specify your medical conditions
                           </label>
                           <textarea
-                            value={member.healthConcernsDetails || ''}
+                            value={member.medicalConditionsDetails || ''}
                             onChange={(e) =>
                               handleFamilyMemberChange(
                                 index,
-                                'healthConcernsDetails',
+                                'medicalConditionsDetails',
                                 e.target.value
                               )
                             }
