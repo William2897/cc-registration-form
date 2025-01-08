@@ -556,10 +556,31 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
 
   // Modify the navigation buttons section
   const isNextButtonDisabled = () => {
-    if (packageType === 'family' && numFamilyMembers < 2) return true;
+    if (packageType === 'family') {
+      // Check if number of family members is less than 2
+      if (numFamilyMembers < 2) return true;
+
+      // Check if main registrant has selected a category
+      if (!individualCategory) return true;
+
+      // Check if all family members have their required fields filled
+      const allMembersValid = familyMembers.every(member => 
+        member.type &&
+        member.fullName &&// Also check full name while we're at it
+        member.gender &&
+        member.acceptsVeganMeal && 
+        member.dateOfBirth // Check date of birth
+      );
+      
+      return !allMembersValid;
+    }
+
+    // For individual package
+    if (!individualCategory) return true;
+    if (!acceptsVeganMeal) return true;
     if (hasAllergies && !allergiesDetails.trim()) return true;
     if (hasMedicalConditions && !medicalConditionsDetails.trim()) return true;
-    if (!acceptsVeganMeal) return true;
+
     return false;
   };
 
