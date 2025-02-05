@@ -1,6 +1,6 @@
 // frontend/src/components/ReviewSubmit.tsx
-import React from 'react';
-import { ArrowLeft, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Check, Loader } from 'lucide-react';
 
 interface ReviewSubmitProps {
   formData: any;
@@ -9,6 +9,21 @@ interface ReviewSubmitProps {
 }
 
 const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      await onSubmit();
+    } catch (error) {
+      console.error('Submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const {
     personalInfo,
     packageType,
@@ -155,18 +170,29 @@ const ReviewSubmit: React.FC<ReviewSubmitProps> = ({ formData, onSubmit, onEdit 
       {/* Navigation Buttons */}
       <div className="flex justify-between">
         <button
-          onClick={onEdit} // Correctly use onEdit
-          className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+          onClick={onEdit}
+          disabled={isSubmitting}
+          className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded disabled:opacity-50"
         >
           <ArrowLeft className="mr-2" size={20} />
           Edit Information
         </button>
         <button
-          onClick={onSubmit}
-          className="flex items-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="flex items-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
         >
-          Submit Registration
-          <Check className="ml-2" size={20} />
+          {isSubmitting ? (
+            <>
+              <Loader className="mr-2 animate-spin" size={20} />
+              Submitting...
+            </>
+          ) : (
+            <>
+              Submit Registration
+              <Check className="ml-2" size={20} />
+            </>
+          )}
         </button>
       </div>
     </div>
