@@ -18,9 +18,21 @@ const Confirmation: React.FC<ConfirmationProps> = ({ formData }) => {
         <p>Package Type: {formData.packageType === 'family' ? 'Family Package' : 'Individual Package'}</p>
         <p>Total Fee: RM {formData.totalFee.toFixed(2)}</p>
       </div>
-      <p className="mt-4 text-sm text-gray-600">
-        We will contact you for payment processing.
-      </p>
+      <div className="mt-4 text-sm text-gray-600 text-left bg-gray-50 p-4 rounded">
+        <h3 className="font-bold mb-2">Payment Instructions</h3>
+        <p className="mb-2">You have two options to complete your payment:</p>
+        <ol className="list-decimal list-inside space-y-2">
+          <li>Wait for our registration team to contact you regarding payment processing.</li>
+          <li>
+            Pay directly through <a href="https://adventistgiving.org.my/" className="text-amber-600 hover:underline" target="_blank" rel="noopener noreferrer">AdventistGiving.org.my</a>:
+            <ul className="list-disc list-inside ml-4 mt-1">
+              <li>Select "Damansara Adventist Hope Centre"</li>
+              <li>Navigate to the Church Camp option under the local church section</li>
+              <li>Enter your payment amount of RM {formData.totalFee.toFixed(2)}</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
     </div>
   );
 };
