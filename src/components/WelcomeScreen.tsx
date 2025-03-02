@@ -74,7 +74,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
 
       <button
         onClick={onStart}
-        className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center text-lg"
+        className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center text-lg"
       >
         Start Registration
         <ArrowRight className="ml-2" size={24} />

@@ -586,62 +586,69 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <h2 className="text-2xl font-bold mb-4 text-amber-600">
+      <h2 className="text-2xl font-bold mb-6 text-amber-600">
         Package Selection
       </h2>
 
-      {renderPackageTypeSelection()}
+      <div className="bg-amber-50 p-6 rounded-lg mb-6">
+        {renderPackageTypeSelection()}
+      </div>
 
       {/* Individual Package Selection */}
       {packageType === 'individual' && (
-        <div>
-          {renderCategorySelection()}
+        <div className="space-y-6">
+          <div className="bg-white p-5 rounded-lg shadow-sm">
+            {renderCategorySelection()}
+          </div>
           {renderVeganMealConfirmation()}
-          {renderHealthSection()}
+          <div className="bg-white p-5 rounded-lg shadow-sm">
+            {renderHealthSection()}
+          </div>
         </div>
       )}
 
       {/* Family Package Selection */}
       {!hasGuardian && packageType === 'family' && (
-        <>
-          {/* Registrant Category Selection */}
-          <div>
-            <label className="block mb-2 font-semibold">
-              What is your Category?
-            </label>
-            <select
-              value={individualCategory}
-              onChange={handleIndividualCategoryChange}
-              required
-              className="w-full p-2 border rounded-lg"
-            >
-              <option value="">Select Category</option>
-              {familyRegistrantCategories.map((category) => (
-                <option key={category.value} value={category.value}>
-                  {category.label} (RM {category.fee})
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="space-y-6">
+          {/* Registrant Category and Number of Family Members */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-5 rounded-lg shadow-sm">
+              <label className="block mb-2 font-semibold">
+                What is your Category?
+              </label>
+              <select
+                value={individualCategory}
+                onChange={handleIndividualCategoryChange}
+                required
+                className="w-full p-2 border rounded-lg"
+              >
+                <option value="">Select Category</option>
+                {familyRegistrantCategories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label} (RM {category.fee})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Number of Family Members */}
-          <div>
-            <label
-              htmlFor="numFamilyMembers"
-              className="block mb-2 font-semibold"
-            >
-              Number of Family Members (Excluding You)
-            </label>
-            <input
-              type="number"
-              id="numFamilyMembers"
-              value={numFamilyMembers}
-              onChange={handleNumFamilyMembersChange}
-              min="0"
-              className="w-full p-3 border rounded-lg"
-              required={packageType === 'family'}
-            />
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+            <div className="bg-white p-5 rounded-lg shadow-sm">
+              <label
+                htmlFor="numFamilyMembers"
+                className="block mb-2 font-semibold"
+              >
+                Number of Family Members (Excluding You)
+              </label>
+              <input
+                type="number"
+                id="numFamilyMembers"
+                value={numFamilyMembers}
+                onChange={handleNumFamilyMembersChange}
+                min="0"
+                className="w-full p-3 border rounded-lg"
+                required={packageType === 'family'}
+              />
+              {error && <p className="text-red-500 mt-2">{error}</p>}
+            </div>
           </div>
 
           {/* Family Members Details */}
@@ -650,12 +657,13 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
               {familyMembers.map((member: FamilyMember, index: number) => (
                 <div
                   key={index}
-                  className="p-4 border rounded-lg bg-gray-50"
+                  className="p-5 border rounded-lg shadow-sm bg-white"
                 >
-                  <h3 className="text-lg font-semibold mb-3">
+                  <h3 className="text-lg font-semibold mb-4 text-amber-700 pb-2 border-b">
                     Family Member {index + 1}
                   </h3>
-                  <div className="space-y-4">
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     {/* Full Name */}
                     <div>
                       <label className="block mb-1 font-medium">
@@ -773,10 +781,12 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                         ))}
                       </select>
                     </div>
+                  </div>
 
+                  <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Allergies Checkbox */}
-                    <div className="mt-4">
-                      <label className="inline-flex items-center">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <label className="inline-flex items-center mb-3">
                         <input
                           type="checkbox"
                           checked={member.hasAllergies || false}
@@ -789,12 +799,12 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                           }
                           className="form-checkbox h-5 w-5 text-amber-600"
                         />
-                        <span className="ml-2">I have allergies</span>
+                        <span className="ml-2 font-medium">Allergies</span>
                       </label>
                       {member.hasAllergies && (
-                        <div className="mt-2">
-                          <label className="block mb-1 font-medium">
-                            Please specify your allergies
+                        <div>
+                          <label className="block mb-1 text-sm">
+                            Please specify allergies
                           </label>
                           <textarea
                             value={member.allergiesDetails || ''}
@@ -806,15 +816,15 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                               )
                             }
                             className="w-full p-2 border rounded-lg"
-                            rows={3}
+                            rows={2}
                           />
                         </div>
                       )}
                     </div>
 
                     {/* Medical Conditions Checkbox */}
-                    <div className="mt-4">
-                      <label className="inline-flex items-center">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <label className="inline-flex items-center mb-3">
                         <input
                           type="checkbox"
                           checked={member.hasMedicalConditions || false}
@@ -827,12 +837,12 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                           }
                           className="form-checkbox h-5 w-5 text-amber-600"
                         />
-                        <span className="ml-2">I have medical conditions</span>
+                        <span className="ml-2 font-medium">Medical Conditions</span>
                       </label>
                       {member.hasMedicalConditions && (
-                        <div className="mt-2">
-                          <label className="block mb-1 font-medium">
-                            Please specify your medical conditions
+                        <div>
+                          <label className="block mb-1 text-sm">
+                            Please specify medical conditions
                           </label>
                           <textarea
                             value={member.medicalConditionsDetails || ''}
@@ -844,63 +854,63 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
                               )
                             }
                             className="w-full p-2 border rounded-lg"
-                            rows={3}
+                            rows={2}
                           />
                         </div>
                       )}
                     </div>
+                  </div>
 
-                    {/* Add vegan meal confirmation for family member */}
-                    <div className="mt-4 bg-green-50 p-4 rounded-lg">
-                      <label className="inline-flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={member.acceptsVeganMeal || false}
-                          onChange={(e) =>
-                            handleFamilyMemberChange(
-                              index,
-                              'acceptsVeganMeal',
-                              e.target.checked
-                            )
-                          }
-                          className="form-checkbox h-5 w-5 text-green-600"
-                          required
-                        />
-                        <span className="ml-2">
-                          Accepts vegan-friendly meals
-                        </span>
+                  {/* Add vegan meal confirmation for family member */}
+                  <div className="mt-5 bg-green-50 p-4 rounded-lg">
+                    <label className="inline-flex items-center mb-3">
+                      <input
+                        type="checkbox"
+                        checked={member.acceptsVeganMeal || false}
+                        onChange={(e) =>
+                          handleFamilyMemberChange(
+                            index,
+                            'acceptsVeganMeal',
+                            e.target.checked
+                          )
+                        }
+                        className="form-checkbox h-5 w-5 text-green-600"
+                        required
+                      />
+                      <span className="ml-2 font-medium">
+                        Accepts vegan-friendly meals
+                      </span>
+                    </label>
+                    
+                    <div>
+                      <label className="block mb-1 text-sm">
+                        Additional Dietary Restrictions (Optional)
                       </label>
-                      
-                      <div className="mt-2">
-                        <label className="block mb-1 font-medium">
-                          Additional Dietary Restrictions (Optional)
-                        </label>
-                        <textarea
-                          value={member.additionalDietaryRestrictions || ''}
-                          onChange={(e) =>
-                            handleFamilyMemberChange(
-                              index,
-                              'additionalDietaryRestrictions',
-                              e.target.value
-                            )
-                          }
-                          className="w-full p-2 border rounded-lg"
-                          rows={2}
-                          placeholder="Please specify any additional dietary restrictions"
-                        />
-                      </div>
+                      <textarea
+                        value={member.additionalDietaryRestrictions || ''}
+                        onChange={(e) =>
+                          handleFamilyMemberChange(
+                            index,
+                            'additionalDietaryRestrictions',
+                            e.target.value
+                          )
+                        }
+                        className="w-full p-2 border rounded-lg"
+                        rows={2}
+                        placeholder="Please specify any additional dietary restrictions"
+                      />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </>
+        </div>
       )}
 
       {/* Total Fee Display */}
-      <div className="bg-amber-50 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold mb-2">Total Fee</h3>
+      <div className="bg-amber-50 p-6 rounded-lg shadow-sm">
+        <h3 className="text-xl font-semibold mb-2 text-amber-700">Total Fee</h3>
         {packageType === 'individual' && (
           <p className="text-2xl">RM {totalFee.toFixed(2)}</p>
         )}
@@ -912,16 +922,21 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
             <p className="text-2xl font-bold text-green-600">
               Discounted Fee: RM {totalFee.toFixed(2)}
             </p>
+            <p className="text-sm text-gray-600 mt-2">
+              {numFamilyMembers + 1 >= 5 ? '20% family discount applied' : 
+               numFamilyMembers + 1 === 4 ? '15% family discount applied' : 
+               numFamilyMembers + 1 === 3 ? '10% family discount applied' : ''}
+            </p>
           </>
         )}
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between">
+      <div className="flex justify-between pt-4 mt-6 border-t border-gray-200">
         <button
           type="button"
           onClick={onPrev}
-          className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+          className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
           Previous
@@ -931,7 +946,7 @@ const PackageSelection: React.FC<PackageSelectionProps> = ({
           className={`flex items-center ${
             isNextButtonDisabled()
               ? 'bg-gray-300 cursor-not-allowed'
-              : 'bg-amber-500 hover:bg-amber-600'
+              : 'bg-amber-500 hover:bg-amber-600 transition-colors'
           } text-white font-bold py-2 px-4 rounded`}
           disabled={isNextButtonDisabled()}
         >
