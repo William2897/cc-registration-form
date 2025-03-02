@@ -47,8 +47,8 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl mx-auto sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl p-4 sm:p-6 lg:p-8">
         <ProgressIndicator
           currentStep={currentStep}
           totalSteps={5}

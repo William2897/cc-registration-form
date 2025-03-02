@@ -29,6 +29,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({ formData }) => {
               <li>Select "Damansara Adventist Hope Centre"</li>
               <li>Navigate to the Church Camp option under the local church section</li>
               <li>Enter your payment amount of RM {formData.totalFee.toFixed(2)}</li>
+              <li>Send your proof of payment to Kimberly (<a href="tel:+60 11-1988 7239" className="text-amber-600 hover:underline">+60 11-1988 7239</a>)</li>
             </ul>
           </li>
         </ol>
